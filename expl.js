@@ -58,7 +58,7 @@ class Explosions extends Array {
 					sx: co * force0,
 					sy: si * force0,
 					ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
-					stopk: physical * (1 - sectorMul * 0.5) + rnd1(physical * 0.125 * homogenity),
+					airResistance: physical * (1 - sectorMul * 0.5) + rnd1(physical * 0.125 * homogenity),
 					gravity,
 					physical: physical / 0.0001,
 					t: 0,
@@ -96,8 +96,8 @@ class Explosions extends Array {
 
 			let v2 = pt.sx * pt.sx + pt.sy * pt.sy;
 			let d = Math.sqrt(v2);
-			let ax = pt.sx / d * pt.stopk * v2;
-			let ay = pt.sy / d * pt.stopk * v2;
+			let ax = pt.sx / d * pt.airResistance * v2;
+			let ay = pt.sy / d * pt.airResistance * v2;
 
 			if (ax * ax + ay * ay > v2) {
 				pt.sx = 0;

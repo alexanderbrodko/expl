@@ -83,10 +83,10 @@
 		function drawPts(dt, height) {
 
 			canvas.width = canvas.width; // clear
-			ctx.globalCompositeOperation = 'lighter'; // additive blend
+			ctx.globalCompositeOperation = 'lighter'; // additive blend; so no need to use globalAlpha
 
 			for (let e of expl) if (e.t > 0) {
-				let size = e.params.size,
+				let size = e.params.size * e.airResistance * 10000,
 					opacity = Math.sin(e.t / e.ttl * Math.PI);
 
 				ctx.fillStyle = `rgb(0, ${opacity * 255}, 0)`;
