@@ -5,7 +5,7 @@ Demo: https://alexanderbrodko.github.io/expl/
 
 ![image](https://github.com/alexanderbrodko/expl/assets/57812581/7fad6981-8050-40d6-b1db-512e6b9edbb6)
 
-##Usage
+## Usage
 
 ```
 // create
