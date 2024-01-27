@@ -16,7 +16,6 @@ class Explosions extends Array {
 		super();
 
 		this.wind = 0;
-		this.cid = 1;
 	}
 	add({ count, x, y, dx, dy, spread, gravity, homogenity, physical, ttl, params }) {
 
@@ -62,7 +61,7 @@ class Explosions extends Array {
 					gravity,
 					physical: physical / 0.0001,
 					t: 0,
-					id: this.cid++,
+					id: Math.random(),
 					params
 				};
 

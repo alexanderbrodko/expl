@@ -87,9 +87,10 @@
 
 			for (let e of expl) if (e.t > 0) {
 				let size = e.params.size * (0.0001 + e.airResistance) * 10000,
-					opacity = Math.sin(e.t / e.ttl * Math.PI);
+					opacity = Math.sin(e.t / e.ttl * Math.PI),
+					hue = e.params.getHue(e.id);
 
-				ctx.fillStyle = `rgb(0, ${opacity * 255}, 0)`;
+				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 100}%)`;
 				ctx.fillRect(e.x - size / 2, e.y - size / 2, size, size);
 			}
 		}
@@ -121,7 +122,10 @@
 				ttl: parseFloat(editorTtl.value),
 				homogenity: parseFloat(editorHomogenity.value),
 				physical: parseFloat(editorPhysical.value),
-				params: { size: parseFloat(editorSize.value) }
+				params: {
+					size: parseFloat(editorSize.value),
+					getHue: random => Math.floor(random * 360)
+				}
 			};
 		}
 
