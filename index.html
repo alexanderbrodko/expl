@@ -86,7 +86,7 @@
 			ctx.globalCompositeOperation = 'lighter'; // additive blend; so no need to use globalAlpha
 
 			for (let e of expl) if (e.t > 0) {
-				let size = e.params.size * e.airResistance * 10000,
+				let size = e.params.size * (0.0001 + e.airResistance) * 10000,
 					opacity = Math.sin(e.t / e.ttl * Math.PI);
 
 				ctx.fillStyle = `rgb(0, ${opacity * 255}, 0)`;

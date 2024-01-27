@@ -47,7 +47,7 @@ class Explosions extends Array {
 			let dir = (dir0 + i * sector + rnd1(sector * homogenity)) * (1 - homogenity * 0.5) + (dir05 + rnd1(sector * count * 0.5 * homogenity)) * homogenity * 0.5,
 				co = Math.cos(dir),
 				si = Math.sin(dir),
-				force0 = force + rnd1(force * 0.5 * homogenity),
+				force0 = (force + rnd1(force * 0.5 * homogenity)) * (1 + physical * 10000),
 				sectorMul = Math.max(0, 1 - Math.abs(i - count / 2) * 2 / count * homogenity);
 			
 			force0 *= sectorMul;
