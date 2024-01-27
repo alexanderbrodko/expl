@@ -48,17 +48,17 @@
 
 <body>
 	<canvas width="1000" height="500"></canvas>
-
+	
 	<div id="settings">
-		<input type="range" id="pt-editor-size" min="5" max="500" step="5" /> preview size<br />
+		<input type="range" id="pt-editor-size" min="5" max="500" step="5" value="5" /> preview size<br />
 		<input type="range" id="pt-editor-count" min="1" max="50" step="1" /> count<br />
-		<input type="range" id="pt-editor-spread" min="0" max="1" step="0.05" /> spread<br />
-		<input type="range" id="pt-editor-dx" min="-500" max="500" step="50" /> speed-x<br />
-		<input type="range" id="pt-editor-dy" min="-500" max="500" step="50" /> speed-y<br />
-		<input type="range" id="pt-editor-homogenity" min="0.0" max="1" step="0.05" /> homogenity<br />
-		<input type="range" id="pt-editor-physical" min="0.0" max="0.0001" step="0.000005" /> physical<br />
-		<input type="range" id="pt-editor-gravity" min="-500" max="500" step="50" /> gravity<br />
-		<input type="range" id="pt-editor-ttl" min="0.1" max="1" step="0.05" /> ttl<br />
+		<input type="range" id="pt-editor-spread" min="0" max="1" step="0.05" value="1" /> spread<br />
+		<input type="range" id="pt-editor-dx" min="-500" max="500" step="50" value="0" /> speed-x<br />
+		<input type="range" id="pt-editor-dy" min="-500" max="500" step="50" value="-500" /> speed-y<br />
+		<input type="range" id="pt-editor-homogenity" min="0.0" max="1" step="0.05" value="0.25" /> homogenity<br />
+		<input type="range" id="pt-editor-physical" min="0.0" max="0.0001" step="0.000005" value="0.0001" /> physical<br />
+		<input type="range" id="pt-editor-gravity" min="-500" max="500" step="50" value="500" /> gravity<br />
+		<input type="range" id="pt-editor-ttl" min="0.1" max="1" step="0.05" value="0.5" /> ttl<br />
 		Virtual space is 1000x1000. Note that Y is inverted in OpenGL.
 	</div>
 	<pre id="output"></pre>
