@@ -24,6 +24,7 @@ expl.add({
 	"homogenity": 0.2,
 	"physical": 0.000085,
 	"params": {
+		// here can be any param that you need; maybe extra update function?
 		"size": 10
 	}
 });
@@ -32,8 +33,13 @@ expl.add({
 expl.update(dt);
 
 // draw
-for (let e of expl) if (e.t > 0) {
-  // draw in any way possible
+for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
+	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY thing
+	e.x, e.y, e.params; // use this to draw
+
+	// Make sure that your virtual space is 1000x1000
+	// If you use OpenGL, revert Y axis
+	// And draw in any way possible
 }
 
 ```
