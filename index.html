@@ -130,6 +130,8 @@
 		}
 
 		function addExpl() {
+			if (!window.document.hasFocus()) return;
+			
 			let descr = getPtDescr();
 			expl.add(descr);
 
