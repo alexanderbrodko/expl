@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta charset="utf-8">
+	<title>Explosions Editor</title>
+	<script src="expl.js"></script>
+	<style type="text/css">
+		body {
+			font-family: sans-serif;
+			font-size: 1.2em;
+			margin: 0;
+		}
+		canvas {
+			background: #000;
+			width: 50vw;
+			float: left;
+		}
+		input {
+			width: 70%;
+			margin: 1%;
+		}
+		#copy {
+		}
+		#settings {
+			width: 49vw;
+			float: left;
+		}
+		pre {
+			float: left;
+			width: 100%;
+		}
+		@media screen and (orientation:portrait) {
+			body {
+				font-size: 2vmax;
+			}
+			canvas {
+				width: 100%;
+			}
+			#settings {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<canvas width="1000" height="500"></canvas>
+
+	<div id="settings">
+		<input type="range" id="pt-editor-size" min="5" max="500" step="5" /> preview size<br />
+		<input type="range" id="pt-editor-count" min="1" max="50" step="1" /> count<br />
+		<input type="range" id="pt-editor-spread" min="0" max="1" step="0.05" /> spread<br />
+		<input type="range" id="pt-editor-dx" min="-500" max="500" step="50" /> speed-x<br />
+		<input type="range" id="pt-editor-dy" min="-500" max="500" step="50" /> speed-y<br />
+		<input type="range" id="pt-editor-homogenity" min="0.0" max="1" step="0.05" /> homogenity<br />
+		<input type="range" id="pt-editor-physical" min="0.0" max="0.0001" step="0.000005" /> physical<br />
+		<input type="range" id="pt-editor-gravity" min="-500" max="500" step="50" /> gravity<br />
+		<input type="range" id="pt-editor-ttl" min="0.1" max="1" step="0.05" /> ttl<br />
+	</div>
+	<pre id="output"></pre>
+	Virtual space is 1000x1000. Note that Y is inverted in OpenGL.
+
+	<script type="text/javascript">
+
+		let editorDx = document.getElementById('pt-editor-dx'),
+			editorDy = document.getElementById('pt-editor-dy'),
+			editorCount = document.getElementById('pt-editor-count'),
+			editorSpread = document.getElementById('pt-editor-spread'),
+			editorGravity = document.getElementById('pt-editor-gravity'),
+			editorTtl = document.getElementById('pt-editor-ttl'),
+			editorHomogenity = document.getElementById('pt-editor-homogenity'),
+			editorPhysical = document.getElementById('pt-editor-physical'),
+			editorSize = document.getElementById('pt-editor-size');
+
+		let expl = new Explosions(),
+			canvas = document.querySelector('canvas'),
+			ctx = canvas.getContext('2d'),
+			cwidth = canvas.width,
+			cheight = canvas.height;
+
+		function drawPts(dt, height) {
+
+			canvas.width = canvas.width; // clear
+			ctx.globalCompositeOperation = 'lighter'; // additive blend
+
+			for (let e of expl) if (e.t > 0) {
+				let size = e.params.size,
+					opacity = Math.sin(e.t / e.ttl * Math.PI);
+
+				ctx.fillStyle = `rgb(0, ${opacity * 255}, 0)`;
+				ctx.fillRect(e.x - size / 2, e.y - size / 2, size, size);
+			}
+		}
+
+		let prevUpdateTime = Date.now();
+
+		function update(timestamp) {
+			prevUpdateTime = prevUpdateTime || timestamp;
+			let dt = (timestamp - prevUpdateTime) * 0.001;
+
+			expl.update(dt);
+			drawPts();
+
+			prevUpdateTime = timestamp;
+
+			requestAnimationFrame(update);
+		}
+		update();
+
+		function getPtDescr() {
+			return {
+				x: cwidth / 2,
+				y: cheight / 2,
+				dx: parseFloat(editorDx.value),
+				dy: parseFloat(editorDy.value),
+				count: parseFloat(editorCount.value),
+				spread: parseFloat(editorSpread.value),
+				gravity: parseFloat(editorGravity.value),
+				ttl: parseFloat(editorTtl.value),
+				homogenity: parseFloat(editorHomogenity.value),
+				physical: parseFloat(editorPhysical.value),
+				params: { size: parseFloat(editorSize.value) }
+			};
+		}
+
+		function addExpl() {
+			let descr = getPtDescr();
+			expl.add(descr);
+
+			let text = JSON.stringify(descr, null, '\t');
+			document.getElementById('output').innerHTML = text;
+			window.localStorage.setItem('save', text);
+		}
+
+		try {
+			let descr = JSON.parse(window.localStorage.getItem('save'));
+			editorDx.value = descr.dx;
+			editorDy.value = descr.dy;
+			editorCount.value = descr.count;
+			editorSpread.value = descr.spread;
+			editorGravity.value = descr.gravity;
+			editorTtl.value = descr.ttl;
+			editorHomogenity.value = descr.homogenity;
+			editorPhysical.value = descr.physical;
+			editorSize.value = descr.params.size;
+		} catch (e) {}
+
+		setInterval(addExpl, 1000);
+
+	</script>
+</body>
+
+</html>
