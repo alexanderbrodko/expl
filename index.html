@@ -48,7 +48,7 @@
 
 <body>
 	<canvas width="1000" height="500"></canvas>
-	
+
 	<div id="settings">
 		<input type="range" id="pt-editor-size" min="5" max="500" step="5" value="5" /> preview size<br />
 		<input type="range" id="pt-editor-count" min="1" max="50" step="1" /> count<br />
@@ -99,6 +99,10 @@
 		let prevUpdateTime = Date.now();
 
 		function update(timestamp) {
+			requestAnimationFrame(update);
+
+			if (!window.document.hasFocus()) return;
+
 			prevUpdateTime = prevUpdateTime || timestamp;
 			let dt = (timestamp - prevUpdateTime) * 0.001;
 
@@ -106,8 +110,6 @@
 			drawPts();
 
 			prevUpdateTime = timestamp;
-
-			requestAnimationFrame(update);
 		}
 		update();
 
