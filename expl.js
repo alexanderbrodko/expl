@@ -82,7 +82,9 @@ class Explosions extends Array {
 		}
 	}
 	update(dt) {
-		this.wind = Math.sin(Date.now() / 10000);
+		this.wind = Math.sin(Date.now() / 10000) * 0.25;
+
+		let windy = Math.pow(Math.sin(Date.now() / 1300), 10) * 0.1 + Math.pow(Math.sin(Date.now() / 700), 100) * 0.25;
 
 		for (let i = 0; i < this.length; i++) {
 			let pt = this[i];
@@ -107,7 +109,8 @@ class Explosions extends Array {
 				pt.sy -= ay;
 			}
 
-			pt.sx += pt.physical * this.wind * dt / Math.max(0.1, pt.gravity * pt.gravity);
+			pt.sx += pt.physical * this.wind * dt / Math.max(0.3, pt.gravity * pt.gravity);
+			pt.sy += pt.physical * windy * dt / Math.max(0.3, pt.gravity * pt.gravity);
 			pt.sy += pt.physical * pt.gravity * dt;
 
 			if (pt.t >= pt.ttl) {
