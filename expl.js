@@ -17,7 +17,7 @@ class Explosions extends Array {
 
 		this.wind = 0;
 	}
-	add({ count, x, y, dx, dy, spread, gravity, homogenity, physical, ttl, params }) {
+	add({ count, x, y, dx, dy, spread, area, gravity, homogenity, physical, ttl, params }) {
 
 		if (!(count > 0)) debugger;
 		if (typeof(x) !== 'number') debugger;
@@ -25,6 +25,7 @@ class Explosions extends Array {
 		if (typeof(dx) !== 'number') debugger;
 		if (typeof(dy) !== 'number') debugger;
 		if (!(spread >= 0 && spread <= 1)) debugger;
+		if (!(area >= 0)) debugger;
 		if (typeof(gravity) !== 'number') debugger;
 		if (!(homogenity >= 0 && homogenity <= 1)) debugger;
 		if (!(physical >= 0 && physical <= 0.0001)) debugger;
@@ -44,18 +45,18 @@ class Explosions extends Array {
 
 		for (let i = 0; i < count; i++) {
 			let dir = (dir0 + i * sector + rnd1(sector * homogenity)) * (1 - homogenity * 0.5) + (dir05 + rnd1(sector * count * 0.5 * homogenity)) * homogenity * 0.5,
-				co = Math.cos(dir),
-				si = Math.sin(dir),
 				force0 = (force + rnd1(force * 0.5 * homogenity)) * (1 + physical * 10000),
-				sectorMul = Math.max(0, 1 - Math.abs(i - count / 2) * 2 / count * homogenity);
+				sectorMul = Math.max(0, 1 - Math.abs(i - count / 2) * 2 / count * homogenity),
+				areaDistRand = Math.random() * area * homogenity,
+				areaAngle = Math.random() * Math.PI * 2;
 			
 			force0 *= sectorMul;
 			
 			let pt = {
-					x,
-					y,
-					sx: co * force0,
-					sy: si * force0,
+					x: x + Math.cos(areaAngle) * areaDistRand * homogenity + Math.cos(dir) * area * (1 - homogenity),
+					y: y + Math.sin(areaAngle) * areaDistRand * homogenity + Math.sin(dir) * area * (1 - homogenity),
+					sx: Math.cos(dir) * force0,
+					sy: Math.sin(dir) * force0,
 					ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
 					airResistance: physical * (1 - sectorMul * 0.5) + rnd1(physical * 0.125 * homogenity),
 					gravity,

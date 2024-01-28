@@ -53,11 +53,12 @@
 		<input type="range" id="pt-editor-size" min="5" max="500" step="5" value="5" /> preview size<br />
 		<input type="range" id="pt-editor-count" min="1" max="50" step="1" /> count<br />
 		<input type="range" id="pt-editor-spread" min="0" max="1" step="0.05" value="1" /> spread<br />
-		<input type="range" id="pt-editor-dx" min="-500" max="500" step="50" value="0" /> speed-x<br />
-		<input type="range" id="pt-editor-dy" min="-500" max="500" step="50" value="-500" /> speed-y<br />
+		<input type="range" id="pt-editor-area" min="0" max="1000" step="10" value="0" /> spawn area<br />
+		<input type="range" id="pt-editor-dx" min="-1000" max="1000" step="50" value="0" /> speed-x<br />
+		<input type="range" id="pt-editor-dy" min="-1000" max="1000" step="50" value="-500" /> speed-y<br />
 		<input type="range" id="pt-editor-homogenity" min="0.0" max="1" step="0.05" value="0.25" /> homogenity<br />
 		<input type="range" id="pt-editor-physical" min="0.0" max="0.0001" step="0.000005" value="0.0001" /> physical<br />
-		<input type="range" id="pt-editor-gravity" min="-500" max="500" step="50" value="500" /> gravity<br />
+		<input type="range" id="pt-editor-gravity" min="-500" max="1000" step="50" value="1000" /> gravity<br />
 		<input type="range" id="pt-editor-ttl" min="0.1" max="1" step="0.05" value="0.5" /> ttl<br />
 		Virtual space is 1000x1000. Note that Y is inverted in OpenGL.
 	</div>
@@ -69,6 +70,7 @@
 			editorDy = document.getElementById('pt-editor-dy'),
 			editorCount = document.getElementById('pt-editor-count'),
 			editorSpread = document.getElementById('pt-editor-spread'),
+			editorArea = document.getElementById('pt-editor-area'),
 			editorGravity = document.getElementById('pt-editor-gravity'),
 			editorTtl = document.getElementById('pt-editor-ttl'),
 			editorHomogenity = document.getElementById('pt-editor-homogenity'),
@@ -121,6 +123,7 @@
 				dy: parseFloat(editorDy.value),
 				count: parseFloat(editorCount.value),
 				spread: parseFloat(editorSpread.value),
+				area: parseFloat(editorArea.value),
 				gravity: parseFloat(editorGravity.value),
 				ttl: parseFloat(editorTtl.value),
 				homogenity: parseFloat(editorHomogenity.value),
@@ -149,6 +152,7 @@
 			editorDy.value = descr.dy;
 			editorCount.value = descr.count;
 			editorSpread.value = descr.spread;
+			editorArea.value = descr.area;
 			editorGravity.value = descr.gravity;
 			editorTtl.value = descr.ttl;
 			editorHomogenity.value = descr.homogenity;
