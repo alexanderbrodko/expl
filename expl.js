@@ -19,7 +19,7 @@ class Explosions extends Array {
 
 		this.wind = 0;
 	}
-	add({ count, x, y, dx, dy, spread, area, gravity, homogenity, physical, ttl, params }) {
+	add({ count, x, y, dx, dy, spread, area, gravity, homogenity, physical, ttl, params }, fxDelay = 0) {
 
 		if (!(count > 0)) debugger;
 		if (typeof(x) !== 'number') debugger;
@@ -74,11 +74,11 @@ class Explosions extends Array {
 
 		toShuffle.shuffle(Math.sqrt(homogenity));
 
-		let duration = physical * homogenity * 0.1;
+		let duration = physical * homogenity * ttl * 0.5;
 		
 		for (let i = 0; i < count; i++) {
 			let delay0 = i / count * duration;
-			toShuffle[i].t = -delay0 + rnd1(duration * homogenity);
+			toShuffle[i].t = -fxDelay - delay0 + rnd1(duration * homogenity);
 		}
 	}
 	update(dt) {

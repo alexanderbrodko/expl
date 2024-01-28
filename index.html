@@ -32,6 +32,9 @@
 			float: left;
 			width: 100%;
 		}
+		select {
+			margin: 1%;
+		}
 		@media screen and (orientation:portrait) {
 			body {
 				font-size: 2vmax;
@@ -93,6 +96,8 @@
 					opacity = Math.sin(e.t / e.ttl * Math.PI),
 					hue = e.params.getHue(e.id);
 
+				size *= (1 + opacity);
+
 				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 50}%)`;
 				ctx.fillRect(cwidth / 2 + e.x * vmax / 2 - size / 2, cheight / 2 - e.y * vmax / 2 - size / 2, size, size);
 			}
@@ -142,7 +147,7 @@
 			expl.add(descr);
 
 			let text = JSON.stringify(descr, null, '\t');
-			document.getElementById('output').innerHTML = text;
+			document.getElementById('output').innerText = text;
 			window.localStorage.setItem('save', text);
 		}
 
