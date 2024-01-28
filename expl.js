@@ -11,6 +11,8 @@ Array.prototype.shuffle = function (hom = 1) {
 	}
 }
 
+const AIR_RESIST = 0.0001;
+
 class Explosions extends Array {
 	constructor() {
 		super();
@@ -28,7 +30,7 @@ class Explosions extends Array {
 		if (!(area >= 0)) debugger;
 		if (typeof(gravity) !== 'number') debugger;
 		if (!(homogenity >= 0 && homogenity <= 1)) debugger;
-		if (!(physical >= 0 && physical <= 0.0001)) debugger;
+		if (!(physical >= 0 && physical <= 0.0001/0.0001)) debugger;
 		if (!(ttl > 0)) debugger;
 
 		let rnd1 = x => -x + Math.random() * x * 2;
@@ -45,7 +47,7 @@ class Explosions extends Array {
 
 		for (let i = 0; i < count; i++) {
 			let dir = (dir0 + i * sector + rnd1(sector * homogenity)) * (1 - homogenity * 0.5) + (dir05 + rnd1(sector * count * 0.5 * homogenity)) * homogenity * 0.5,
-				force0 = (force + rnd1(force * 0.5 * homogenity)) * (1 + physical * 10000),
+				force0 = (force + rnd1(force * 0.5 * homogenity)) * (1 + physical),
 				sectorMul = Math.max(0, 1 - Math.abs(i - count / 2) * 2 / count * homogenity),
 				areaDistRand = Math.random() * area * homogenity,
 				areaAngle = Math.random() * Math.PI * 2;
@@ -58,9 +60,9 @@ class Explosions extends Array {
 					sx: Math.cos(dir) * force0,
 					sy: Math.sin(dir) * force0,
 					ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
-					airResistance: physical * (1 - sectorMul * 0.5) + rnd1(physical * 0.125 * homogenity),
+					airResistance: physical * AIR_RESIST * (1 - sectorMul * 0.5) + rnd1(physical * AIR_RESIST * 0.125 * homogenity),
 					gravity,
-					physical: physical / 0.0001,
+					physical,
 					t: 0,
 					id: Math.random(),
 					params
@@ -74,7 +76,7 @@ class Explosions extends Array {
 
 		toShuffle.shuffle(Math.sqrt(homogenity));
 
-		let duration = physical / 0.0001 * 0.1;
+		let duration = physical * 0.1;
 		
 		for (let i = 0; i < count; i++) {
 			let delay0 = i / count * duration;

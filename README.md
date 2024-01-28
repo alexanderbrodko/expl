@@ -50,3 +50,7 @@ for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
 }
 
 ```
+
+## Notes
+
+Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis id directed to bottom.
