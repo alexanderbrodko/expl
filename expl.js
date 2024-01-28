@@ -55,20 +55,18 @@ class Explosions extends Array {
 			force0 *= sectorMul;
 			
 			let pt = {
-					x: x + Math.cos(areaAngle) * areaDistRand * homogenity + Math.cos(dir) * area * (1 - homogenity),
-					y: y + Math.sin(areaAngle) * areaDistRand * homogenity + Math.sin(dir) * area * (1 - homogenity),
-					sx: Math.cos(dir) * force0,
-					sy: Math.sin(dir) * force0,
-					ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
-					airResistance: physical * AIR_RESIST * (1 - sectorMul * 0.5) + rnd1(physical * AIR_RESIST * 0.125 * homogenity),
-					gravity,
-					physical,
-					t: 0,
-					id: Math.random(),
-					params
-				};
-
-				if (force < 0) debugger;
+				x: x + Math.cos(areaAngle) * areaDistRand * homogenity + Math.cos(dir) * area * (1 - homogenity),
+				y: y + Math.sin(areaAngle) * areaDistRand * homogenity + Math.sin(dir) * area * (1 - homogenity),
+				sx: Math.cos(dir) * force0,
+				sy: Math.sin(dir) * force0,
+				ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
+				airResistance: physical * AIR_RESIST * (1 - sectorMul * 0.5) + rnd1(physical * AIR_RESIST * 0.125 * homogenity),
+				gravity,
+				physical,
+				t: 0,
+				id: Math.random(),
+				params
+			};
 
 			this.push(pt);
 			toShuffle.push(pt);
