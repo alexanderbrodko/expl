@@ -30,7 +30,7 @@ class Explosions extends Array {
 		if (!(area >= 0)) debugger;
 		if (typeof(gravity) !== 'number') debugger;
 		if (!(homogenity >= 0 && homogenity <= 1)) debugger;
-		if (!(physical >= 0 && physical <= 0.0001/0.0001)) debugger;
+		if (!(physical >= 0 && physical <= 1)) debugger;
 		if (!(ttl > 0)) debugger;
 
 		let rnd1 = x => -x + Math.random() * x * 2;
