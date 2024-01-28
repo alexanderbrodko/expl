@@ -42,12 +42,12 @@ class Explosions extends Array {
 			dirStart = sector * count / 2 - sector / 2,
 			dir0 = Math.atan2(dy, dx) - dirStart,
 			dir05 = dir0 + sector * count * 0.5,
-			force = Math.max(0.001, Math.hypot(dx, dy)),
+			force = Math.max(AIR_RESIST, Math.hypot(dx, dy)),
 			toShuffle = [];
 
 		for (let i = 0; i < count; i++) {
 			let dir = (dir0 + i * sector + rnd1(sector * homogenity)) * (1 - homogenity * 0.5) + (dir05 + rnd1(sector * count * 0.5 * homogenity)) * homogenity * 0.5,
-				force0 = (force + rnd1(force * 0.5 * homogenity)) * (1 + physical),
+				force0 = (force + rnd1(force * 0.5 * homogenity)),
 				sectorMul = Math.max(0, 1 - Math.abs(i - count / 2) * 2 / count * homogenity),
 				areaDistRand = Math.random() * area * homogenity,
 				areaAngle = Math.random() * Math.PI * 2;
@@ -74,7 +74,7 @@ class Explosions extends Array {
 
 		toShuffle.shuffle(Math.sqrt(homogenity));
 
-		let duration = physical * 0.1;
+		let duration = physical * homogenity * 0.1;
 		
 		for (let i = 0; i < count; i++) {
 			let delay0 = i / count * duration;
@@ -82,7 +82,7 @@ class Explosions extends Array {
 		}
 	}
 	update(dt) {
-		this.wind = Math.sin(Date.now() / 10000) * 5;
+		this.wind = Math.sin(Date.now() / 10000);
 
 		for (let i = 0; i < this.length; i++) {
 			let pt = this[i];
@@ -107,7 +107,7 @@ class Explosions extends Array {
 				pt.sy -= ay;
 			}
 
-			pt.sx += pt.physical * 10000 * this.wind * dt / Math.max(100, pt.gravity * pt.gravity);
+			pt.sx += pt.physical * this.wind * dt / Math.max(0.1, pt.gravity * pt.gravity);
 			pt.sy += pt.physical * pt.gravity * dt;
 
 			if (pt.t >= pt.ttl) {

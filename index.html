@@ -53,14 +53,13 @@
 		<input type="range" id="pt-editor-size" min="5" max="500" step="5" value="5" /> preview size<br />
 		<input type="range" id="pt-editor-count" min="1" max="50" step="1" /> count<br />
 		<input type="range" id="pt-editor-spread" min="0" max="1" step="0.05" value="1" /> spread<br />
-		<input type="range" id="pt-editor-area" min="0" max="1000" step="10" value="0" /> spawn area<br />
-		<input type="range" id="pt-editor-dx" min="-1000" max="1000" step="50" value="0" /> expl x dir<br />
-		<input type="range" id="pt-editor-dy" min="-1000" max="1000" step="50" value="-500" /> expl y dir<br />
+		<input type="range" id="pt-editor-area" min="0" max="0.5" step="0.02" value="0" /> spawn area<br />
+		<input type="range" id="pt-editor-dx" min="-1" max="1" step="0.05" value="0" /> expl x dir<br />
+		<input type="range" id="pt-editor-dy" min="-1" max="1" step="0.05" value="-0.5" /> expl y dir<br />
 		<input type="range" id="pt-editor-homogenity" min="0.0" max="1" step="0.05" value="0.25" /> homogenity<br />
 		<input type="range" id="pt-editor-physical" min="0" max="1" step="0.05" value="0.5" /> physical<br />
-		<input type="range" id="pt-editor-gravity" min="-500" max="1000" step="50" value="1000" /> gravity<br />
+		<input type="range" id="pt-editor-gravity" min="-1" max="1" step="0.05" value="1" /> gravity<br />
 		<input type="range" id="pt-editor-ttl" min="0.1" max="1" step="0.05" value="0.5" /> ttl<br />
-		Virtual space is 1000x1000. Note that Y is inverted in OpenGL.
 	</div>
 	<pre id="output"></pre>
 
@@ -81,20 +80,21 @@
 			canvas = document.querySelector('canvas'),
 			ctx = canvas.getContext('2d'),
 			cwidth = canvas.width,
-			cheight = canvas.height;
+			cheight = canvas.height,
+			vmax = Math.max(cwidth, cheight);
 
-		function drawPts(dt, height) {
+		function drawPts(dt) {
 
 			canvas.width = canvas.width; // clear
 			ctx.globalCompositeOperation = 'lighter'; // additive blend; so no need to use globalAlpha
 
 			for (let e of expl) if (e.t > 0) {
-				let size = e.params.size * (0.0001 + e.airResistance) * 10000,
+				let size = e.params.size * e.airResistance * 10000 / Math.max(0.1, editorPhysical.value),
 					opacity = Math.sin(e.t / e.ttl * Math.PI),
 					hue = e.params.getHue(e.id);
 
-				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 100}%)`;
-				ctx.fillRect(e.x - size / 2, e.y - size / 2, size, size);
+				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 50}%)`;
+				ctx.fillRect(cwidth / 2 + e.x * vmax / 2 - size / 2, cheight / 2 - e.y * vmax / 2 - size / 2, size, size);
 			}
 		}
 
@@ -117,8 +117,8 @@
 
 		function getPtDescr() {
 			return {
-				x: cwidth / 2,
-				y: cheight / 2,
+				x: 0,
+				y: 0,
 				dx: parseFloat(editorDx.value),
 				dy: parseFloat(editorDy.value),
 				count: parseFloat(editorCount.value),
