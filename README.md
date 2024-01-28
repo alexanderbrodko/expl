@@ -5,6 +5,13 @@ Demo: https://alexanderbrodko.github.io/expl/
 
 ![image](https://github.com/alexanderbrodko/expl/assets/57812581/7fad6981-8050-40d6-b1db-512e6b9edbb6)
 
+
+Use `homogenity` to see what is going on:
+
+![ezgif-1-e01af0b34d](https://github.com/alexanderbrodko/expl/assets/57812581/140d3b0e-a307-4b97-b10e-e48369c09c39)
+
+
+
 ## Usage
 
 ```
