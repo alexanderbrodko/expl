@@ -64,7 +64,7 @@ class Explosions extends Array {
 				gravity,
 				physical,
 				t: 0,
-				id: Math.random(),
+				rnd: Math.random(),
 				params
 			};
 
