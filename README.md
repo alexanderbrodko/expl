@@ -18,7 +18,7 @@ Use `homogenity` to see what is going on:
 
 Copy **expl.js** to your working dir and place `<script src="expl.js"></script>` in head of your document
 
-```
+``` js
 // You have some JSON from editor
 let fx = {
 	"x": 500,
