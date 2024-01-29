@@ -22,19 +22,20 @@ let expl = new Explosions();
 expl.add({
 	"x": 500,
 	"y": 250,
-	"dx": 0,
-	"dy": -350,
+	"dx": 0, // direction and force of an explosion
+	"dy": -350, // direction and force of an explosion
 	"count": 28,
-	"spread": 0.2,
+	"spread": 0.2, // how wide sector emitter have
+	"area", // radius of the emitter
 	"gravity": 500,
-	"ttl": 0.55,
+	"ttl": 0.55, // time to live
 	"homogenity": 0.2,
 	"physical": 0.000085,
 	"params": {
-		// here can be any param that you need; maybe extra update function?
+		// here can be any param that you need; maybe color or extra update function?
 		"size": 10
 	}
-});
+}, pause); // optional delay
 
 // update
 expl.update(dt);
@@ -42,15 +43,11 @@ expl.update(dt);
 // draw
 for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
 	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY thing
-	e.x, e.y, e.params; // use this to draw
 
-	// Make sure that your virtual space is 1000x1000
-	// If you use OpenGL, revert Y axis
-	// And draw in any way possible
+	// Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis id directed to bottom.
+	// But can draw in any way possible
+	e.x, e.y, e.params; // use this to draw
 }
 
 ```
 
-## Notes
-
-Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis id directed to bottom.
