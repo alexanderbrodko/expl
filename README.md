@@ -1,5 +1,7 @@
 # expl
-Super simple and lightweight JS particles imitating explosion. Editor included
+Single file JS particles imitating explosion. Editor included
+
+
 
 Demo: https://alexanderbrodko.github.io/expl/
 
@@ -14,12 +16,11 @@ Use `homogenity` to see what is going on:
 
 ## Usage
 
-```
-// create
-let expl = new Explosions();
+Copy **expl.js** to your working dir and place `<script src="expl.js"></script>` in head of your document
 
-// add
-expl.add({
+```
+// You have some JSON from editor
+let fx = {
 	"x": 500,
 	"y": 250,
 	"dx": 0, // direction and force of an explosion
@@ -35,17 +36,22 @@ expl.add({
 		// here can be any param that you need; maybe color or extra update function?
 		"size": 10
 	}
-}, pause); // optional delay
+};
 
-// update
+// create manager
+let expl = new Explosions();
+
+// add fx
+expl.add(fx, pause); // optional delay
+
+// dont forget to update
 expl.update(dt);
 
-// draw
+// draw in any way possible
 for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
-	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY thing
+	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY
 
 	// Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis id directed to bottom.
-	// But can draw in any way possible
 	e.x, e.y, e.params; // use this to draw
 }
 
