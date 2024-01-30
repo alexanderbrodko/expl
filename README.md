@@ -7,8 +7,7 @@ Demo: https://alexanderbrodko.github.io/expl/
 
 Usage example: [PixiJS integration](https://www.pixiplayground.com/#/edit/zbOl38iaDnyNFfPJ3qqJK)
 
-![image](https://github.com/alexanderbrodko/expl/assets/57812581/7fad6981-8050-40d6-b1db-512e6b9edbb6)
-
+![image](https://github.com/alexanderbrodko/expl/assets/57812581/a27dc10e-6166-492c-809c-d89e1de86822)
 
 Use `homogenity` to see what is going on:
 
@@ -20,10 +19,29 @@ Use `homogenity` to see what is going on:
 Copy **expl.js** to your working dir and place `<script src="expl.js"></script>` in head of your document
 
 ``` js
-// You have some JSON from editor
+// You have some code from editor URL
+let str = 'DBmA/1kFAX//ZgU=';
+
+// create manager
+let expl = new Explosions();
+
+// add fx
+expl.add(x, y, expl.fromBase64(str));
+
+// dont forget to update
+expl.update(dt);
+
+// draw in any way possible
+for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
+	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY
+
+	// Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis is directed to bottom
+	e.x, e.y, e.rnd, e.custom, e.params; // use this to draw
+}
+
+// Optional: can create from object
 let fx = {
-	"x": 500,
-	"y": 250,
+	"pause": 0,
 	"dx": 0, // direction and force of an explosion
 	"dy": -350, // direction and force of an explosion
 	"count": 28,
@@ -33,28 +51,9 @@ let fx = {
 	"ttl": 0.55, // time to live
 	"homogenity": 0.2,
 	"physical": 0.000085,
-	"params": {
-		// here can be any param that you need; maybe color or extra update function?
-		"size": 10
-	}
+	"custom": 10 // custom param; preview size in editor
 };
-
-// create manager
-let expl = new Explosions();
-
-// add fx
-expl.add(fx, pause); // optional delay
-
-// dont forget to update
-expl.update(dt);
-
-// draw in any way possible
-for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
-	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY
-
-	// Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis id directed to bottom.
-	e.x, e.y, e.rnd, e.params; // use this to draw
-}
+expl.add(x, y, fx, yourParams); // every particle will have .params === yourParams
 
 ```
 
