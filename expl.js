@@ -20,8 +20,8 @@ class Explosions extends Array {
 		this.wind = 0;
 	}
 	toBase64({ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }) {
-		window.sstr = String.fromCharCode(pause * 255, count, dx * 127 + 128, dy * 127 + 128, spread * 255, area * 255, gravity * 127 + 128, homogenity * 255, physical * 255, ttl * 255, custom);
-		return btoa(sstr);
+		let str = String.fromCharCode(pause * 255, count, dx * 127 + 128, dy * 127 + 128, spread * 255, area * 255, gravity * 127 + 128, homogenity * 255, physical * 255, ttl * 255, custom);
+		return btoa(str);
 	}
 	fromBase64(base64Str) {
 		let arr = atob(base64Str).split('').map(s => parseFloat(s.charCodeAt(0)));
