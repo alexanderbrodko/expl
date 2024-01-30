@@ -53,14 +53,13 @@
 	<canvas width="1000" height="500"></canvas>
 
 	<div id="settings">
-		_channel: <select id="pt-editor-channel" onchange="setEditor()">
-			<option>main</option>
+		<select id="pt-editor-channel" onchange="setEditor()">
+			<option>main channel</option>
+			<option>additional</option>
 			<option>extra</option>
-			<option>channel_3</option>
 			<option>reserved</option>
-		</select>
-		<a href="https://github.com/alexanderbrodko/expl/">github</a><br />
-		<input type="range" id="pt-editor-size" min="5" max="500" step="5" value="5" /> preview size<br />
+			<option>emergency</option>
+		</select><a href="https://github.com/alexanderbrodko/expl/">github</a><br />
 		<input type="range" id="pt-editor-pause" min="0" max="1" step="0.05" value="0" /> pause<br />
 		<input type="range" id="pt-editor-count" min="0" max="50" step="1" /> count<br />
 		<input type="range" id="pt-editor-spread" min="0" max="1" step="0.05" value="0.35" /> spread<br />
@@ -71,91 +70,10 @@
 		<input type="range" id="pt-editor-physical" min="0" max="1" step="0.05" value="1" /> physical<br />
 		<input type="range" id="pt-editor-gravity" min="-1" max="1" step="0.05" value="-0.9" /> gravity<br />
 		<input type="range" id="pt-editor-ttl" min="0.1" max="1" step="0.05" value="0.25" /> ttl<br />
+		<input type="range" id="pt-editor-custom" min="1" max="255" step="1" value="5" /> preview size<br />
 	</div>
-	<pre id="output"></pre>
 
 	<script type="text/javascript">
-
-		window.ediorChannel = 0;
-
-		let defaults = {
-			main: {
-				"x": 0,
-				"y": 0,
-				"dx": 0,
-				"dy": 1,
-				"count": 26,
-				"spread": 0.35,
-				"area": 0.02,
-				"gravity": -0.9,
-				"ttl": 0.4,
-				"homogenity": 0.45,
-				"physical": 1,
-				"params": {
-					"pause": 0.1,
-					"size": 5
-				}
-			},
-			extra: {
-				"x": 0,
-				"y": 0,
-				"dx": 0,
-				"dy": 0.25,
-				"count": 5,
-				"spread": 0.35,
-				"area": 0.15,
-				"gravity": 0.1,
-				"ttl": 0.7,
-				"homogenity": 0.45,
-				"physical": 1,
-				"params": {
-					"pause": 0,
-					"size": 20
-				}
-			},
-			channel_3: {
-				"x": 0,
-				"y": 0,
-				"dx": 0,
-				"dy": 0,
-				"count": 1,
-				"spread": 0.5,
-				"area": 0,
-				"gravity": 0,
-				"ttl": 0.15,
-				"homogenity": 1,
-				"physical": 0,
-				"params": {
-					"pause": 0,
-					"size": 60
-				}
-			},
-			reserved: {
-				"x": 0,
-				"y": 0,
-				"dx": 0,
-				"dy": 0,
-				"count": 6,
-				"spread": 1,
-				"area": 0.08,
-				"gravity": 0,
-				"ttl": 0.3,
-				"homogenity": 0.5,
-				"physical": 0,
-				"params": {
-					"pause": 0.05,
-					"size": 10
-				}
-			}
-		}
-
-		let channels = {
-			main: JSON.parse(window.localStorage.getItem('main') || 'null') || defaults.main,
-			extra: JSON.parse(window.localStorage.getItem('extra') || 'null') || defaults.extra,
-			channel_3: JSON.parse(window.localStorage.getItem('channel_3') || 'null') || defaults.channel_3,
-			reserved: JSON.parse(window.localStorage.getItem('reserved') || 'null') || defaults.reserved
-		};
-
 		let editorDx = document.getElementById('pt-editor-dx'),
 			editorDy = document.getElementById('pt-editor-dy'),
 			editorCount = document.getElementById('pt-editor-count'),
@@ -165,12 +83,53 @@
 			editorTtl = document.getElementById('pt-editor-ttl'),
 			editorHomogenity = document.getElementById('pt-editor-homogenity'),
 			editorPhysical = document.getElementById('pt-editor-physical'),
-			editorSize = document.getElementById('pt-editor-size'),
+			editorCustom = document.getElementById('pt-editor-custom'),
 			editorPause = document.getElementById('pt-editor-pause'),
-			channel = document.getElementById('pt-editor-channel');
+			editorChannel = document.getElementById('pt-editor-channel');
+
+		let expl = new Explosions(),
+			canvas = document.querySelector('canvas'),
+			ctx = canvas.getContext('2d'),
+			cwidth = canvas.width,
+			cheight = canvas.height,
+			vmax = Math.max(cwidth, cheight),
+			channels = [];
+
+		let url = window.location.href,
+			urlParamsMarker = url.lastIndexOf('?');
+		if (urlParamsMarker > 0) {
+			let urlParams = url.substring(urlParamsMarker + 1);
+
+			channels = urlParams.split(',');
+
+			setEditor();
+		} else {
+			urlParamsMarker = url.length;
+		}
+
+		function getEditor() {
+			return expl.toBase64({
+				pause: parseFloat(editorPause.value),
+				dx: parseFloat(editorDx.value),
+				dy: parseFloat(editorDy.value),
+				count: parseFloat(editorCount.value),
+				spread: parseFloat(editorSpread.value),
+				area: parseFloat(editorArea.value),
+				gravity: parseFloat(editorGravity.value),
+				ttl: parseFloat(editorTtl.value),
+				homogenity: parseFloat(editorHomogenity.value),
+				physical: parseFloat(editorPhysical.value),
+				custom: parseFloat(editorCustom.value)
+			});
+		}
 
 		function setEditor() {
-			let obj = channels[channel.value];
+			let str = channels[editorChannel.selectedIndex];
+			if (!str) return;
+
+			let obj = expl.fromBase64(str);
+
+			editorPause.value = obj.pause;
 			editorDx.value = obj.dx;
 			editorDy.value = obj.dy;
 			editorCount.value = obj.count;
@@ -180,16 +139,8 @@
 			editorTtl.value = obj.ttl;
 			editorHomogenity.value = obj.homogenity;
 			editorPhysical.value = obj.physical;
-			editorSize.value = obj.params?.size;
-			editorPause.value = obj.params?.pause;
+			editorCustom.value = obj.custom;
 		}
-
-		let expl = new Explosions(),
-			canvas = document.querySelector('canvas'),
-			ctx = canvas.getContext('2d'),
-			cwidth = canvas.width,
-			cheight = canvas.height,
-			vmax = Math.max(cwidth, cheight);
 
 		function drawPts(dt) {
 
@@ -198,8 +149,8 @@
 
 			for (let e of expl) if (e.t > 0) {
 				let opacity = Math.sin(e.t / e.ttl * Math.PI), // 0 at start, 1 in the middle and 0 at end
-					size = e.params.size * (1 + opacity), // more opacity means bigger
-					hue = Math.floor(e.rnd * 10 + e.params.size * Math.PI * Math.PI) % 360;
+					size = e.custom * (1 + opacity), // more opacity means bigger
+					hue = Math.floor(e.rnd * 10 + e.custom * Math.PI * Math.PI) % 360;
 
 				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 50}%)`;
 				ctx.fillRect(cwidth / 2 + e.x * vmax / 2 - size / 2, cheight / 2 - e.y * vmax / 2 - size / 2, size, size);
@@ -223,43 +174,24 @@
 		}
 		update();
 
-		function getPtDescr() {
-			return {
-				x: 0,
-				y: 0,
-				dx: parseFloat(editorDx.value),
-				dy: parseFloat(editorDy.value),
-				count: parseFloat(editorCount.value),
-				spread: parseFloat(editorSpread.value),
-				area: parseFloat(editorArea.value),
-				gravity: parseFloat(editorGravity.value),
-				ttl: parseFloat(editorTtl.value),
-				homogenity: parseFloat(editorHomogenity.value),
-				physical: parseFloat(editorPhysical.value),
-				params: {
-					pause: parseFloat(editorPause.value),
-					size: parseFloat(editorSize.value)
-				}
-			};
-		}
-
 		function runFx() {
 			if (!window.document.hasFocus()) return;
 
-			let descr = getPtDescr();
-			channels[channel.value] = descr;
+			if (editorCount.value > 0) {
+				let str = getEditor();
+				channels[editorChannel.selectedIndex] = str;
+			} else {
+				channels[editorChannel.selectedIndex] = '';
+			}
 
-			if (channels.main.count > 0) expl.add(channels.main, channels.main.params.pause);
-			if (channels.extra.count > 0) expl.add(channels.extra, channels.extra.params.pause);
-			if (channels.channel_3.count > 0) expl.add(channels.channel_3, channels.channel_3.params.pause);
-			if (channels.reserved.count > 0) expl.add(channels.reserved, channels.reserved.params.pause);
+			for (let str of channels) {
+				if (str) {
+					expl.add(0, 0, expl.fromBase64(str));
+				}
+			}
 
-			let text = JSON.stringify(descr, null, '\t');
-			document.getElementById('output').innerText = text;
-			window.localStorage.setItem('main', JSON.stringify(channels.main));
-			window.localStorage.setItem('extra', JSON.stringify(channels.extra));
-			window.localStorage.setItem('channel_3', JSON.stringify(channels.channel_3));
-			window.localStorage.setItem('reserved', JSON.stringify(channels.reserved));
+			let newUrl = url.substr(0, urlParamsMarker) + '?' + channels.join(',');
+			window.history.replaceState({}, null, newUrl);
 		}
 
 		setInterval(runFx, 1000);

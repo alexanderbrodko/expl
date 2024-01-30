@@ -19,7 +19,25 @@ class Explosions extends Array {
 
 		this.wind = 0;
 	}
-	add({ count, x, y, dx, dy, spread, area, gravity, homogenity, physical, ttl, params }, fxDelay = 0) {
+	toBase64({ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }) {
+		window.sstr = String.fromCharCode(pause * 255, count, dx * 127 + 128, dy * 127 + 128, spread * 255, area * 255, gravity * 127 + 128, homogenity * 255, physical * 255, ttl * 255, custom);
+		return btoa(sstr);
+	}
+	fromBase64(base64Str) {
+		let arr = atob(base64Str).split('').map(s => parseFloat(s.charCodeAt(0)));
+		let [pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom] = arr;
+		pause /= 255;
+		dx -= 128; dx /= 127;
+		dy -= 128; dy /= 127;
+		spread /= 255;
+		area /= 255;
+		gravity -= 128; gravity /= 127;
+		homogenity /= 255;
+		physical /= 255;
+		ttl /= 255;
+		return { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom };
+	}
+	add(x, y, { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }, commonParams) {
 
 		if (!(count > 0)) debugger;
 		if (typeof(x) !== 'number') debugger;
@@ -65,7 +83,8 @@ class Explosions extends Array {
 				physical,
 				t: 0,
 				rnd: Math.random(),
-				params
+				custom,
+				params: commonParams
 			};
 
 			this.push(pt);
@@ -78,7 +97,7 @@ class Explosions extends Array {
 		
 		for (let i = 0; i < count; i++) {
 			let delay0 = i / count * duration;
-			toShuffle[i].t = -fxDelay - delay0 + rnd1(duration * homogenity);
+			toShuffle[i].t = -pause - delay0 + rnd1(duration * homogenity);
 		}
 	}
 	update(dt) {
