@@ -37,8 +37,11 @@ for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
 	// Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis is directed to bottom
 	e.x, e.y, e.rnd, e.custom, e.params; // use this to draw
 }
+```
 
-// Optional: can create from object
+### Optional
+You can spawn particles from an object with params:
+``` js
 let fx = {
 	"pause": 0,
 	"dx": 0, // direction and force of an explosion
