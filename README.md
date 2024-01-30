@@ -53,7 +53,7 @@ for (let e of expl) if (e.t > 0) { // avoid particles waiting to start
 	let progress = e.t / e. ttl; // can animate opacity or any other propery you need; DIY
 
 	// Virtual space is GL like: -1 to 1. Screen center is (0, 0). Y axis id directed to bottom.
-	e.x, e.y, e.params; // use this to draw
+	e.x, e.y, e.rnd, e.params; // use this to draw
 }
 
 ```
