@@ -4,7 +4,7 @@ Single file JS particles imitating explosion. Editor included
 
 Demo: https://alexanderbrodko.github.io/expl/?DBmA/1kFAX//ZgU=,AAeAv/8UYOUAPws=,,,GQSAplkreZn/WRM=
 
-**Important note:** draw is your own business. For a draw example, see [PixiJS integration](https://www.pixiplayground.com/#/edit/zbOl38iaDnyNFfPJ3qqJK)
+**Important note:** draw is your own business. For a draw example, see [draw using Canvas](https://github.com/alexanderbrodko/expl/blob/main/index.html#L145) in editor or [PixiJS integration](https://www.pixiplayground.com/#/edit/zbOl38iaDnyNFfPJ3qqJK).
 
 ![image](https://github.com/alexanderbrodko/expl/assets/57812581/a27dc10e-6166-492c-809c-d89e1de86822)
 
