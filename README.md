@@ -3,7 +3,7 @@ Single file JS particles imitating explosion. Editor included
 
 
 
-Demo: https://alexanderbrodko.github.io/expl/
+Demo: https://alexanderbrodko.github.io/expl/?DBmA/1kFAX//ZgU=,AAeAv/8UYOUAPws=,,,GQSAplkreZn/WRM=
 
 Usage example: [PixiJS integration](https://www.pixiplayground.com/#/edit/zbOl38iaDnyNFfPJ3qqJK)
 
