@@ -140,6 +140,18 @@
 			editorHomogenity.value = obj.homogenity;
 			editorPhysical.value = obj.physical;
 			editorCustom.value = obj.custom;
+
+			editorPause.title = obj.pause.toFixed(3);
+			editorDx.title = obj.dx.toFixed(3);
+			editorDy.title = obj.dy.toFixed(3);
+			editorCount.title = obj.count;
+			editorSpread.title = obj.spread.toFixed(3);
+			editorArea.title = obj.area.toFixed(3);
+			editorGravity.title = obj.gravity.toFixed(3);
+			editorTtl.title = obj.ttl.toFixed(3);
+			editorHomogenity.title = obj.homogenity.toFixed(3);
+			editorPhysical.title = obj.physical.toFixed(3);
+			editorCustom.title = obj.custom;
 		}
 
 		function drawPts(dt) {
@@ -149,7 +161,7 @@
 
 			for (let e of expl) if (e.t > 0) {
 				let opacity = Math.sin(e.t / e.ttl * Math.PI), // 0 at start, 1 in the middle and 0 at end
-					size = e.custom * (1 + opacity), // more opacity means bigger
+					size = e.custom * (1 + opacity) * e.weight, // more opacity means bigger
 					hue = Math.floor(e.rnd * 10 + e.custom * Math.PI * Math.PI) % 360;
 
 				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 50}%)`;
@@ -190,6 +202,8 @@
 				}
 			}
 
+			setEditor();
+			
 			let newUrl = url.substr(0, urlParamsMarker) + '?' + channels.join(',');
 			window.history.replaceState({}, null, newUrl);
 		}
