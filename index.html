@@ -108,7 +108,7 @@
 		}
 
 		function getEditor() {
-			return expl.toBase64({
+			return expl.toBase32({
 				pause: parseFloat(editorPause.value),
 				dx: parseFloat(editorDx.value),
 				dy: parseFloat(editorDy.value),
@@ -127,7 +127,7 @@
 			let str = channels[editorChannel.selectedIndex];
 			if (!str) return;
 
-			let obj = expl.fromBase64(str);
+			let obj = expl.fromBase32(str);
 
 			editorPause.value = obj.pause;
 			editorDx.value = obj.dx;
@@ -165,15 +165,13 @@
 					hue = Math.floor(e.rnd * 10 + e.custom * Math.PI * Math.PI) % 360;
 
 				ctx.fillStyle = `hsl(${hue} 100% ${opacity * 50}%)`;
-				ctx.fillRect(cwidth / 2 + e.x * vmax / 2 - size / 2, cheight / 2 - e.y * vmax / 2 - size / 2, size, size);
+				ctx.fillRect(cwidth / 2 + e.x * vmax - size / 2, cheight / 2 - e.y * vmax - size / 2, size, size);
 			}
 		}
 
 		let prevUpdateTime = Date.now();
 
 		function update(timestamp) {
-			requestAnimationFrame(update);
-
 			if (!window.document.hasFocus()) return;
 
 			prevUpdateTime = prevUpdateTime || timestamp;
@@ -183,8 +181,10 @@
 			drawPts();
 
 			prevUpdateTime = timestamp;
+
+			requestAnimationFrame(update);
 		}
-		update();
+		update(prevUpdateTime);
 
 		function runFx() {
 			if (!window.document.hasFocus()) return;
@@ -198,7 +198,7 @@
 
 			for (let str of channels) {
 				if (str) {
-					expl.add(0, 0, expl.fromBase64(str));
+					expl.add(0, 0, expl.fromBase32(str));
 				}
 			}
 

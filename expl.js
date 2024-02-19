@@ -13,6 +13,29 @@ Array.prototype.shuffle = function (hom = 1) {
 
 const AIR_RESIST = 0.0002;
 
+let pack32Params = [
+	[1023, 0],
+	[1, 0],
+	[511, 512],
+	[511, 512],
+	[1023, 0],
+	[1023, 0],
+	[511, 512],
+	[1023, 0],
+	[1023, 0],
+	[1023, 0],
+	[1, 0]
+];
+
+function to2Base32(n) {
+	let str = n.toString(32);
+	if (str.length === 1) {
+		str = '0' + str;
+	}
+	if (str.length !== 2) debugger;
+	return str;
+}
+
 class Explosions extends Array {
 	constructor() {
 		super();
@@ -38,7 +61,30 @@ class Explosions extends Array {
 		ttl /= 255;
 		return { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom };
 	}
-	add(x, y, { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }, commonParams, globalPause = 0, fxScale = 2) {
+	toBase32({ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }) {
+		let arr = [ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom ],
+			str = '';
+		for (let i = 0; i < pack32Params.length; i++) {
+			let n = Math.floor(arr[i] * pack32Params[i][0] + pack32Params[i][1]);
+			str += to2Base32(n);
+		}
+		return str;
+	}
+	fromBase32(str) {
+		if (!str || typeof(str) !== 'string') debugger;
+		let arr = [];
+		for (let i = 0; i < pack32Params.length; i++) {
+			let sub = str.substr(i * 2, 2),
+				n = parseInt(sub, 32);
+			if (isNaN(n)) debugger;
+			n -= pack32Params[i][1];
+			n /= pack32Params[i][0];
+			arr.push(n);
+		}
+		let [ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom ] = arr;
+		return { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom };
+	}
+	add(x, y, { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }, commonParams, globalPause = 0, forceMul = 3) {
 
 		if (!(count > 0)) debugger;
 		if (typeof(x) !== 'number') debugger;
@@ -61,7 +107,7 @@ class Explosions extends Array {
 			dirStart = sector * count / 2 - sector / 2,
 			dir0 = Math.atan2(dy, dx) - dirStart,
 			dir05 = dir0 + sector * count * 0.5,
-			force = Math.max(AIR_RESIST, Math.hypot(dx, dy)) * fxScale,
+			force = Math.max(AIR_RESIST, Math.hypot(dx, dy)),
 			toShuffle = [];
 
 		for (let i = 0; i < count; i++) {
@@ -74,13 +120,13 @@ class Explosions extends Array {
 			force0 *= sectorMul;
 			
 			let pt = {
-				x: x + Math.cos(areaAngle) * areaDistRand * homogenity * fxScale + Math.cos(dir) * area * (1 - homogenity) * fxScale,
-				y: y + Math.sin(areaAngle) * areaDistRand * homogenity * fxScale + Math.sin(dir) * area * (1 - homogenity) * fxScale,
-				sx: Math.cos(dir) * force0,
-				sy: Math.sin(dir) * force0,
+				x: x + Math.cos(areaAngle) * areaDistRand * homogenity + Math.cos(dir) * area * (1 - homogenity),
+				y: y + Math.sin(areaAngle) * areaDistRand * homogenity + Math.sin(dir) * area * (1 - homogenity),
+				sx: Math.cos(dir) * force0 * forceMul,
+				sy: Math.sin(dir) * force0 * forceMul,
 				ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
-				airResistance: physical * AIR_RESIST * (1 - sectorMul * 0.5) + rnd1(physical * AIR_RESIST * 0.125 * homogenity),
-				gravity: gravity * fxScale,
+				airResistance: physical * AIR_RESIST * (1 - sectorMul * 0.5) + rnd1(physical * AIR_RESIST * 0.125 * homogenity) * forceMul,
+				gravity: gravity * forceMul,
 				physical,
 				t: 0,
 				rnd: Math.random(),
