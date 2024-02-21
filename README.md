@@ -25,7 +25,7 @@ let str = '05006c360agpub00g00r007v80g0,055k6c360afvub00g00s007vnvg0,212q1jvv0a1
 let expl = new Explosions();
 
 // add fx
-expl.spawnFromString(x, y, expl.fromBase64(str));
+expl.spawnFromString(x, y, str);
 
 // dont forget to update
 expl.update(dt);
