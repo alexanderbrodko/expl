@@ -2,7 +2,7 @@
 Single file JS particles imitating explosion. Editor included
 
 
-Demo: https://alexanderbrodko.github.io/expl/?DBmA/1kFAX//ZgU=,AAeAv/8UYOUAPws=,,,GQSAplkreZn/WRM=
+Demo: https://alexanderbrodko.github.io/expl/?05006c360agpub00g00r007v80g0,055k6c360afvub00g00s007vnvg0,212q1jvv0a1jvv00cp1i1jlig0g0
 
 ![image](https://github.com/alexanderbrodko/expl/assets/57812581/a27dc10e-6166-492c-809c-d89e1de86822)
 
@@ -19,13 +19,13 @@ Copy **expl.js** to your working dir and place `<script src="expl.js"></script>`
 
 ``` js
 // You have some code from editor URL
-let str = 'DBmA/1kFAX//ZgU=';
+let str = '05006c360agpub00g00r007v80g0,055k6c360afvub00g00s007vnvg0,212q1jvv0a1jvv00cp1i1jlig0g0';
 
 // create manager
 let expl = new Explosions();
 
 // add fx
-expl.add(x, y, expl.fromBase64(str));
+expl.spawnFromString(x, y, expl.fromBase64(str));
 
 // dont forget to update
 expl.update(dt);
@@ -55,7 +55,12 @@ let fx = {
 	"physical": 0.000085,
 	"custom": 10 // custom param; preview size in editor
 };
-expl.add(x, y, fx, yourParams); // every particle will have .params === yourParams
+expl.add(x, y, fx, yourParams, pause); // every particle will have .params === yourParams
+
+// or if you want to add single fx
+let str = '05006c360agpub00g00r007v80g0';
+fx = expl.unpack(str);
+expl.add(x, y, fx);
 
 ```
 

@@ -13,27 +13,50 @@ Array.prototype.shuffle = function (hom = 1) {
 
 const AIR_RESIST = 0.0002;
 
-let pack32Params = [
-	[1023, 0],
-	[1, 0],
-	[511, 512],
-	[511, 512],
-	[1023, 0],
-	[1023, 0],
-	[511, 512],
-	[1023, 0],
-	[1023, 0],
-	[1023, 0],
-	[1, 0]
+let packParams = [
+	[1, 0, 10],
+	[1, 0, 32],
+	[1023, 0, 32],
+	[1023, 0, 32],
+	[1023, 0, 32],
+	[1023, 0, 32],
+	[1023, 0, 32],
+	[1023, 0, 32],
+	[511, 512, 32],
+	[1, 0, 32],
+	[1023, 0, 32],
+	[1023, 0, 32],
+	[511, 512, 32],
+	[511, 512, 32]
 ];
 
-function to2Base32(n) {
-	let str = n.toString(32);
+function to2Base(n, base) {
+	let str = n.toString(base);
 	if (str.length === 1) {
 		str = '0' + str;
 	}
 	if (str.length !== 2) debugger;
 	return str;
+}
+
+function getCellSize(width, height, count) {
+	let maxSide = Math.max(width, height),
+		minSide = Math.min(width, height),
+		maxc = count;
+
+	if (!maxc) return 0;
+
+	let cell = maxSide / maxc;
+	for (let minc = 1; minc < 100; minc++) {
+		let oldcell = cell;
+		maxc = Math.floor(count / minc);
+		cell = maxSide / (maxc + 1);
+		if (cell * minc >= minSide) {
+			cell = oldcell;
+			break;
+		}
+	}
+	return cell;
 }
 
 class Explosions extends Array {
@@ -42,61 +65,51 @@ class Explosions extends Array {
 
 		this.wind = 0;
 	}
-	toBase64({ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }) {
-		let str = String.fromCharCode(pause * 255, count, dx * 127 + 128, dy * 127 + 128, spread * 255, area * 255, gravity * 127 + 128, homogenity * 255, physical * 255, ttl * 255, custom);
-		return btoa(str);
-	}
-	fromBase64(base64Str) {
-		if (typeof(base64Str) !== 'string') debugger;
-		let arr = atob(base64Str).split('').map(s => parseFloat(s.charCodeAt(0)));
-		let [pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom] = arr;
-		pause /= 255;
-		dx -= 128; dx /= 127;
-		dy -= 128; dy /= 127;
-		spread /= 255;
-		area /= 255;
-		gravity -= 128; gravity /= 127;
-		homogenity /= 255;
-		physical /= 255;
-		ttl /= 255;
-		return { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom };
-	}
-	toBase32({ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }) {
-		let arr = [ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom ],
+	pack({ custom, dir, force, spread, radius, width, homogenity, physical, gravity, count, pause, ttl, dx, dy }) {
+		let arr = [ custom, dir, force, spread, radius, width, homogenity, physical, gravity, count, pause, ttl, dx, dy ],
 			str = '';
-		for (let i = 0; i < pack32Params.length; i++) {
-			let n = Math.floor(arr[i] * pack32Params[i][0] + pack32Params[i][1]);
-			str += to2Base32(n);
+		for (let i = 0; i < packParams.length; i++) {
+			let n = Math.floor(arr[i] * packParams[i][0] + packParams[i][1]);
+			str += to2Base(n, packParams[i][2]);
 		}
 		return str;
 	}
-	fromBase32(str) {
+	unpack(str) {
 		if (!str || typeof(str) !== 'string') debugger;
 		let arr = [];
-		for (let i = 0; i < pack32Params.length; i++) {
+		for (let i = 0; i < packParams.length; i++) {
 			let sub = str.substr(i * 2, 2),
-				n = parseInt(sub, 32);
+				n = parseInt(sub, packParams[i][2]);
 			if (isNaN(n)) debugger;
-			n -= pack32Params[i][1];
-			n /= pack32Params[i][0];
+			n -= packParams[i][1];
+			n /= packParams[i][0];
 			arr.push(n);
 		}
-		let [ pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom ] = arr;
-		return { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom };
+		let [ custom, dir, force, spread, radius, width, homogenity, physical, gravity, count, pause, ttl, dx, dy ] = arr;
+		return { custom, dir, force, spread, radius, width, homogenity, physical, gravity, count, pause, ttl, dx, dy };
 	}
-	add(x, y, { pause, count, dx, dy, spread, area, gravity, homogenity, physical, ttl, custom }, commonParams, globalPause = 0, forceMul = 3) {
+	spawnFromString(x, y, str, commonParams, globalPause, forceMul) {
+		let arr = str.split(',');
+		for (let fxStr of arr) if (fxStr) {
+			this.add(x, y, this.unpack(fxStr), commonParams, globalPause, forceMul);
+		}
+	}
+	add(x, y, { custom, dir, force, spread, radius, width, homogenity, physical, gravity, count, pause, ttl, dx, dy }, commonParams, globalPause = 0, forceMul = 3) {
 
 		if (!(count > 0)) debugger;
 		if (typeof(x) !== 'number') debugger;
 		if (typeof(y) !== 'number') debugger;
-		if (typeof(dx) !== 'number') debugger;
-		if (typeof(dy) !== 'number') debugger;
+		if (typeof(dir) !== 'number') debugger;
+		if (typeof(force) !== 'number') debugger;
 		if (!(spread >= 0 && spread <= 1)) debugger;
-		if (!(area >= 0)) debugger;
+		if (!(radius >= 0)) debugger;
 		if (typeof(gravity) !== 'number') debugger;
 		if (!(homogenity >= 0 && homogenity <= 1)) debugger;
 		if (!(physical >= 0 && physical <= 1)) debugger;
 		if (!(ttl > 0)) debugger;
+		if (!(width >= 0)) debugger;
+		if (typeof(dx) !== 'number') debugger;
+		if (typeof(dy) !== 'number') debugger;
 
 		let rnd1 = x => -x + Math.random() * x * 2;
 
@@ -105,25 +118,36 @@ class Explosions extends Array {
 
 		let sector = Math.PI * 2 * spread / count,
 			dirStart = sector * count / 2 - sector / 2,
-			dir0 = Math.atan2(dy, dx) - dirStart,
+			dir0 = (dir / 180 * Math.PI) - dirStart,
 			dir05 = dir0 + sector * count * 0.5,
-			force = Math.max(AIR_RESIST, Math.hypot(dx, dy)),
-			toShuffle = [];
+			toShuffle = [],
+			normx = Math.cos((dir - 90) / 180 * Math.PI),
+			normy = Math.sin((dir - 90) / 180 * Math.PI);
 
 		for (let i = 0; i < count; i++) {
-			let dir = (dir0 + i * sector + rnd1(sector * homogenity)) * (1 - homogenity * 0.5) + (dir05 + rnd1(sector * count * 0.5 * homogenity)) * homogenity * 0.5,
-				force0 = (force + rnd1(force * 0.5 * homogenity)),
+			let dirHomogenous = (dir0 + i * sector + rnd1(sector * homogenity)) * (1 - homogenity * 0.5) + (dir05 + rnd1(sector * count * 0.5 * homogenity)) * homogenity * 0.5,
+				force0 = force + rnd1(force * 0.5 * homogenity),
 				sectorMul = Math.max(0, 1 - Math.abs(i - count / 2) * 2 / count * homogenity),
-				areaDistRand = Math.random() * area * homogenity,
-				areaAngle = Math.random() * Math.PI * 2;
+				radiusDistRand = Math.random() * radius * homogenity,
+				radiusAngle = Math.random() * Math.PI * 2;
 			
 			force0 *= sectorMul;
-			
+
+			let si = Math.sin(dirHomogenous),
+				co = Math.cos(dirHomogenous);
+
+
+			let radx = Math.cos(radiusAngle) * radiusDistRand * homogenity + co * radius * (1 - homogenity),
+				rady = Math.sin(radiusAngle) * radiusDistRand * homogenity + si * radius * (1 - homogenity);
+
+			let normMulHom = -(i - count / 2) / count * width - 0.5 / count * width,
+				normMulRand = (-0.5 + Math.random()) * width;
+
 			let pt = {
-				x: x + Math.cos(areaAngle) * areaDistRand * homogenity + Math.cos(dir) * area * (1 - homogenity),
-				y: y + Math.sin(areaAngle) * areaDistRand * homogenity + Math.sin(dir) * area * (1 - homogenity),
-				sx: Math.cos(dir) * force0 * forceMul,
-				sy: Math.sin(dir) * force0 * forceMul,
+				x: x + dx + radx + normx * normMulHom * (1 - homogenity) + normx * normMulRand * homogenity,
+				y: y + dy + rady + normy * normMulHom * (1 - homogenity) + normy * normMulRand * homogenity,
+				sx: co * force0 * forceMul,
+				sy: si * force0 * forceMul,
 				ttl: (ttl + rnd1(ttl * homogenity)) * (1 + sectorMul * homogenity),
 				airResistance: physical * AIR_RESIST * (1 - sectorMul * 0.5) + rnd1(physical * AIR_RESIST * 0.125 * homogenity) * forceMul,
 				gravity: gravity * forceMul,
@@ -164,17 +188,19 @@ class Explosions extends Array {
 			pt.x += pt.sx * dt;
 			pt.y += pt.sy * dt;
 
-			let v2 = pt.sx * pt.sx + pt.sy * pt.sy;
-			let d = Math.sqrt(v2);
-			let ax = pt.sx / d * pt.airResistance * v2;
-			let ay = pt.sy / d * pt.airResistance * v2;
+			let v2 = pt.sx * pt.sx + pt.sy * pt.sy,
+				d = Math.sqrt(v2);
+			if (d) {
+				let ax = pt.sx / d * pt.airResistance * v2,
+					ay = pt.sy / d * pt.airResistance * v2;
 
-			if (ax * ax + ay * ay > v2) {
-				pt.sx = 0;
-				pt.sy = 0;
-			} else {
-				pt.sx -= ax;
-				pt.sy -= ay;
+				if (ax * ax + ay * ay > v2) {
+					pt.sx = 0;
+					pt.sy = 0;
+				} else {
+					pt.sx -= ax;
+					pt.sy -= ay;
+				}
 			}
 
 			pt.sx += pt.physical * this.wind * dt / Math.max(0.3, pt.gravity * pt.gravity) * pt.weight;
